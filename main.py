@@ -1,28 +1,24 @@
 #!/usr/bin/python
 import pygame
 from classes import colors 
-import winsound
-import pygame.mixer
+from pygame import mixer
 
 pygame.init()
+mixer.init()
 
 # create the screen (window) and set caption
-
 screen = pygame.display.set_mode([1600,800])
 pygame.display.set_caption('Super Mario Clone')
 
-from pygame import mixer # Load the required library
-
 # mario theme music
-mixer.init()
 themeSong = mixer.music.load('sound-files/mario-medley.mp3')
 
 # mario sounds
-jumpSound = pygame.mixer.Sound('sound-files/smb_jump-small.wav')
-stageClearSound = pygame.mixer.Sound('sound-files/smb_stage_clear.wav')
-pipeSound = pygame.mixer.Sound('sound-files/smb_pipe.wav')
-breakBrickSound = pygame.mixer.Sound('sound-files/smb_breakblock.wav')
-coinSound = pygame.mixer.Sound('sound-files/smb_coin.wav')
+jumpSound = mixer.Sound('sound-files/smb_jump-small.wav')
+stageClearSound = mixer.Sound('sound-files/smb_stage_clear.wav')
+pipeSound = mixer.Sound('sound-files/smb_pipe.wav')
+breakBrickSound = mixer.Sound('sound-files/smb_breakblock.wav')
+coinSound = mixer.Sound('sound-files/smb_coin.wav')
 
 # color variable to use the Color class
 color = colors.Color
@@ -59,8 +55,6 @@ coin2 = Coin(700, 105)
 coin3 = Coin(1250, 205)
 coin4 = Coin(600, 505)
 coin5 = Coin(900, 505)
-
-all_sprites.add(coin1, coin2, coin3, coin4, coin5)
 
 # run game loop
 done = False
@@ -99,8 +93,6 @@ while not done:
             x = x
             y = y + 1
         
-    # rect(where,color,(size)) size = (fromLeft, fromTop, width, length)
-
     # create the ground
     pygame.draw.rect(screen,color.grassgreen,(0,700,1600,20)) # grass
     pygame.draw.rect(screen,color.dirtbrown,(0,720,1600,80)) # dirt
@@ -111,13 +103,14 @@ while not done:
     pygame.draw.rect(screen,color.black,(1195,455,170,265)) # pipe lower
     pygame.draw.rect(screen,color.green,(1200,460,160,260)) 
 
+    # add bricks
     pygame.draw.rect(screen,color.black,(305,300,600,80)) # bricks
     pygame.draw.rect(screen,color.red,(300,305,600,80))
 
     all_sprites.update(x,y) 
     all_sprites.draw(screen)
 
-    #mario height is roughly 210, ground is 700.
+    # mario height is roughly 210, ground starts at 700.
     if x > 1180 and x < 1210:
         if y > 250 and y < 280:
             pipeSound.play()
@@ -126,9 +119,9 @@ while not done:
         if y > 300 and y < 380:
             breakBrickSound.play()            
 
-    # set mario boundaries        
+    ## set mario boundaries: 
     if y > 490: y = 490
-    if y < -200: y = -200
+    if y < -210: y = -210
     if x == 1600:
         mixer.music.stop()
         stageClearSound.play()
@@ -136,7 +129,10 @@ while not done:
         x = -200
         stageClearSound.stop()        
     if x < -200: x = 1800
-    if x == -199: mixer.music.play()
+    if x == -200:
+        all_sprites.add(coin1, coin2, coin3, coin4, coin5)
+    if x == -199: 
+        mixer.music.play()
 
     pygame.display.update()
 
